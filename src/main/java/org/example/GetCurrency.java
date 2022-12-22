@@ -9,11 +9,13 @@ import java.util.Scanner;
 public class GetCurrency {
     public static void Parse() throws IOException {
         Scanner scanner = new Scanner(System.in);
+        String first, second;
 
         System.out.println("Hello!\nEnter first currency");
-        String first = scanner.nextLine();
+        first = scanner.nextLine();
+
         System.out.println("Enter second currency");
-        String second = scanner.nextLine();
+        second = scanner.nextLine();
 
         Document doc = Jsoup.connect("https://www.google.com/search?q=" + first + "+to+"+ second).get();
         Element ElemPrice = doc.selectFirst("span.DFlfde.SwHCTb");
@@ -21,14 +23,31 @@ public class GetCurrency {
         Document doc2 = Jsoup.connect("https://www.google.com/search?q=" + second + "+to+"+ first).get();
         Element ElemPrice2 = doc2.selectFirst("span.DFlfde.SwHCTb");
 
+        if(ElemPrice == null){
+            ElemPrice = doc.selectFirst("span.pclqee");
+            if (ElemPrice == null) {
+                System.out.println("Cannot find " + first);
+                System.exit(0);
+            }
+        }
+        if(ElemPrice2 == null){
+            ElemPrice2 = doc2.selectFirst("span.pclqee");
+            if(ElemPrice2 == null){
+                System.out.println("Cannot find " + second);
+                System.exit(0);
+            }
 
+        }
 
-        assert ElemPrice != null;
-        assert ElemPrice2 != null;
-        double price = Double.parseDouble(ElemPrice.text().replace(",","."));
-        double price2 = Double.parseDouble(ElemPrice2.text().replace(",","."));
+        double price, price2, amount;
+        price = Double.parseDouble(ElemPrice.text().replace(",",".").replace(" ", ""));
+        price2 = Double.parseDouble(ElemPrice2.text().replace(",",".").replace(" ", ""));
 
-        System.out.println("1 "+first+" equals "+price+" "+second+"\nor\n1 "+second+" equals "+price2+" "+first);
+        System.out.println("1 "+first+" equals "+price+" "+second+"\nor\n1 "+second+" equals "+price2+" "+first+"\n");
 
+        System.out.println("Enter amount of currencies");
+        amount = scanner.nextDouble();
+
+        System.out.println("\n"+amount+" "+first+" equals "+price*amount+" "+second+"\nor\n"+amount+" "+second+" equals "+price2*amount+" "+first);
     }
 }
