@@ -16,7 +16,6 @@ public class Parser {
         String second = scanner.nextLine();
         Document doc = Jsoup.connect("https://www.google.com/search?q=" + first + "+to+"+ second).get();
         Element price = doc.selectFirst("span.DFlfde.SwHCTb");
-        System.out.println(price.text());
         return price.toString();
     }
 }
